@@ -1,0 +1,10 @@
+{
+    "name": "@goengine/canvas",
+    "version": "0.1.0",
+    "description": "Hello GoEngine.canvas",
+    "license": "MIT",
+    "author": "Mr.Rui",
+    "type": "module",
+    "dependencies": {},
+    "devDependencies": {}
+}
