@@ -2,7 +2,7 @@ import Value from "@core/object/attribute/Value";
 import BaseCTXNode, { BaseCTXNodeConfig, BaseCTXNodeEvent, BaseCTXNodeStyle } from "../Base";
 
 
-export default class Entrust<C extends IConfig, E extends IEvent> extends BaseCTXNode<IStyle, C, E> {
+export default class Entrust<C extends IConfig<K>, K extends string | number | symbol = keyof C["targets"]> extends BaseCTXNode<C, IStyle, IEvent> {
     /**
      * 是否是委托
      */
@@ -10,7 +10,7 @@ export default class Entrust<C extends IConfig, E extends IEvent> extends BaseCT
     /**
      * 默认Key
      */
-    public static defaultKey: string = "default";
+    public static defaultKey = "default";
 
     constructor(config?: C, style?: IStyle) {
         super();
@@ -25,17 +25,17 @@ export default class Entrust<C extends IConfig, E extends IEvent> extends BaseCT
     /**
      * 目标组
      */
-    public targets: Record<string, Instance<typeof BaseCTXNode>> = {};
+    public targets: Partial<Record<K, Instance<typeof BaseCTXNode>>> = {};
     /**
      * Key
      */
-    protected key?: string;
+    protected key?: K;
 
     /**
      * 切换
-     * @param key 
+     * @param key
      */
-    public toggle(key: string = Entrust.defaultKey, silent?: boolean): void {
+    public toggle(key: K = Entrust.defaultKey as K, silent?: boolean): void {
         const node = this.targets[key];
         if (node) {
             this.key = key;
@@ -47,22 +47,31 @@ export default class Entrust<C extends IConfig, E extends IEvent> extends BaseCT
     }
     /**
      * 命中
-     * @param key 
-     * @returns 
+     * @param key
+     * @returns
      */
-    public hit(key: string = Entrust.defaultKey): boolean { return this.key === key }
+    public hit(key: K = Entrust.defaultKey as K): boolean { return this.key === key }
 
     public setConfig(config: C): void {
         super.setConfig(config);
 
-        const {
-            target,
-            targets
-        } = config;
+        const
+            key = Entrust.defaultKey as K,
+            {
+                targets,
+                defaultTarget
+            } = config;
 
         this.targets = targets ?? this.targets;
-        this.targets[Entrust.defaultKey] ??= target ?? Object.values(this.targets)[0];
-        this.toggle(Entrust.defaultKey, true);
+        this.targets[key] ??= defaultTarget;
+
+        if (!this.targets[key]) {
+            const first = Object.values(this.targets)[0];
+            if (first instanceof BaseCTXNode) {
+                this.targets[key] = first;
+            }
+        }
+        this.toggle(key, true);
 
         this.refactor(true);
     }
@@ -90,21 +99,21 @@ export default class Entrust<C extends IConfig, E extends IEvent> extends BaseCT
     public destroy(): void {
         super.destroy();
         this.target.value?.unbindParent();
-        Object.entries(this.targets).forEach(([_, item]) => item.destroy());
+        Object.entries(this.targets).forEach(([_, item]) => item instanceof BaseCTXNode && item.destroy());
         this.targets = {};
     }
 
 }
 
-interface IConfig extends BaseCTXNodeConfig {
+interface IConfig<K extends string | number | symbol> extends BaseCTXNodeConfig {
     /**
-     * 目标
+     * 默认目标
      */
-    target?: Instance<typeof BaseCTXNode>;
+    defaultTarget?: Instance<typeof BaseCTXNode>;
     /**
      * 目标组
      */
-    targets?: Record<string, Instance<typeof BaseCTXNode>>;
+    targets?: Partial<Record<K, Instance<typeof BaseCTXNode>>>;
 }
 
 interface IEvent extends BaseCTXNodeEvent { }

@@ -3,13 +3,13 @@ import BaseCTXNode, { BaseCTXNodeConfig, BaseCTXNodeEvent, BaseCTXNodeStyle } fr
 /**
  * 矩形
  */
-export default class Rect<C extends IConfig, E extends IEvent> extends BaseCTXNode<IStyle, C, E> {
+export default class Rect extends BaseCTXNode<IConfig, IStyle, IEvent> {
     /**
      * 是否是矩形
      */
     public readonly isRect: boolean = true;
 
-    constructor(config?: C, style?: IStyle) {
+    constructor(config?: IConfig, style?: IStyle) {
         super();
         this.style = style ?? this.style;
         config && this.setConfig(config);
@@ -20,7 +20,7 @@ export default class Rect<C extends IConfig, E extends IEvent> extends BaseCTXNo
      */
     public readonly size = Vector2.zero().bindCallback(this.refactor.bind(this, false));
 
-    public setConfig(config: C): void {
+    public setConfig(config: IConfig): void {
         super.setConfig(config);
 
         const {
@@ -73,7 +73,7 @@ export default class Rect<C extends IConfig, E extends IEvent> extends BaseCTXNo
 
 }
 
-interface IConfig extends BaseCTXNodeConfig, Partial<Pick<Rect<any, any>, "size">> { }
+interface IConfig extends BaseCTXNodeConfig, Partial<Pick<Rect, "size">> { }
 
 interface IStyle extends BaseCTXNodeStyle, Partial<CanvasPathDrawingStyles & CanvasFillStrokeStyles> { }
 

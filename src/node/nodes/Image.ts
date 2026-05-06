@@ -1,7 +1,7 @@
 import { Vector2, Vector4 } from "@core/object/math/Index";
 import BaseCTXNode, { BaseCTXNodeConfig, BaseCTXNodeEvent, BaseCTXNodeStyle } from "../Base";
 
-export default class Image<T extends CanvasImageSource, C extends IConfig, E extends IEvent> extends BaseCTXNode<IStyle, C, E> {
+export default class Image<T extends CanvasImageSource> extends BaseCTXNode<IConfig, IStyle, IEvent> {
     /**
      * 是否是图片
      */
@@ -117,7 +117,7 @@ export default class Image<T extends CanvasImageSource, C extends IConfig, E ext
         target.size.copy(size);
     }
 
-    constructor(public target?: T, config?: C & { callback?: Func.CallBack<Image<T, C, E>> }, style?: IStyle) {
+    constructor(public target?: T, config?: IConfig & { callback?: Func.CallBack<Image<T>> }, style?: IStyle) {
         super();
         this.style = style ?? this.style;
         config && this.setConfig(config);
@@ -158,7 +158,7 @@ export default class Image<T extends CanvasImageSource, C extends IConfig, E ext
         else ctx.drawImage(target, 0, 0, width, height);
     }
 
-    public setConfig(config: C): void {
+    public setConfig(config: IConfig): void {
         super.setConfig(config);
 
         const {
@@ -209,7 +209,14 @@ export default class Image<T extends CanvasImageSource, C extends IConfig, E ext
 
                 this.drawImage(offscreenContext, target, Vector2.fromArray([tw, th]));
             }
-            ctx.drawImage(this.offscreen, -x, -y, width, height);
+            else {
+                const {
+                    width: ow,
+                    height: oh
+                } = this.offscreen;
+
+                ow && oh && ctx.drawImage(this.offscreen, -x, -y, width, height);
+            }
         }
         else this.drawImage(ctx, target);
     }
@@ -228,7 +235,7 @@ export default class Image<T extends CanvasImageSource, C extends IConfig, E ext
 
 }
 
-interface IConfig extends BaseCTXNodeConfig, Partial<Pick<Image<any, any, any>, "size">> { }
+interface IConfig extends BaseCTXNodeConfig, Partial<Pick<Image<any>, "size">> { }
 
 interface IStyle extends BaseCTXNodeStyle, Partial<Pick<CanvasFilters, "filter">> {
     /**

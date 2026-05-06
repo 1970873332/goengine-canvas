@@ -5,8 +5,8 @@ import BaseNode, { BaseNodeConfig, BaseNodeEvent } from "@core/object/Node";
  * 基础ctx节点
  */
 export default abstract class BaseCTXNode<
-    S extends IStyle,
     C extends IConfig,
+    S extends IStyle,
     E extends IEvent,
 > extends BaseNode<C, E, BaseCTXNode<any, any, any>> {
     /**

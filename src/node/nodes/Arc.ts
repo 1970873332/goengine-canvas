@@ -4,13 +4,13 @@ import BaseCTXNode, { BaseCTXNodeConfig, BaseCTXNodeEvent, BaseCTXNodeStyle } fr
 /**
  * 圆弧
  */
-export default class Arc<C extends IConfig, E extends IEvent> extends BaseCTXNode<IStyle, C, E> {
+export default class Arc extends BaseCTXNode<IConfig, IStyle, IEvent> {
     /**
      * 是否是圆弧
      */
     public readonly isArc: boolean = true;
 
-    constructor(config?: C, style?: IStyle) {
+    constructor(config?: IConfig, style?: IStyle) {
         super();
         this.style = style ?? this.style;
         config && this.setConfig(config);
@@ -25,7 +25,7 @@ export default class Arc<C extends IConfig, E extends IEvent> extends BaseCTXNod
      */
     public readonly angle = new Value<number>(0).bindCallback(this.refactor.bind(this, false));
 
-    public setConfig(config: C): void {
+    public setConfig(config: IConfig): void {
         super.setConfig(config);
 
         const {

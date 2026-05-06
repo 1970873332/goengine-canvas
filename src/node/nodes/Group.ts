@@ -1,10 +1,10 @@
 import { Vector2 } from "@core/object/math/Index";
-import BaseCTXNode, { BaseCTXNodeConfig } from "../Base";
+import BaseCTXNode, { BaseCTXNodeConfig, BaseCTXNodeEvent } from "../Base";
 
 /**
  * 组
  */
-export default class Group<C extends IConfig> extends BaseCTXNode<{}, C, {}> {
+export default class Group extends BaseCTXNode<IConfig, {}, IEvent> {
     /**
      * 是否是组
      */
@@ -15,12 +15,12 @@ export default class Group<C extends IConfig> extends BaseCTXNode<{}, C, {}> {
      */
     public readonly size = Vector2.zero().bindCallback(this.refactor.bind(this, false));
 
-    constructor(config?: C) {
+    constructor(config?: IConfig) {
         super();
         config && this.setConfig(config);
     }
 
-    public setConfig(config: C): void {
+    public setConfig(config: IConfig): void {
         super.setConfig(config);
 
         const {
@@ -33,4 +33,6 @@ export default class Group<C extends IConfig> extends BaseCTXNode<{}, C, {}> {
     }
 }
 
-interface IConfig extends BaseCTXNodeConfig, Partial<Pick<Group<any>, "size">> { }
+interface IConfig extends BaseCTXNodeConfig, Partial<Pick<Group, "size">> { }
+
+interface IEvent extends BaseCTXNodeEvent { }

@@ -1,10 +1,10 @@
 import { Vector2 } from "@core/object/math/Index";
-import BaseCTXNode, { BaseCTXNodeConfig } from "../Base";
+import BaseCTXNode, { BaseCTXNodeConfig, BaseCTXNodeEvent } from "../Base";
 
 /**
  * 场景
  */
-export default class Scene extends BaseCTXNode<{}, IConfig, {}> {
+export default class Scene extends BaseCTXNode<IConfig, {}, IEvent> {
     /**
      * 是否是场景
      */
@@ -46,3 +46,5 @@ export default class Scene extends BaseCTXNode<{}, IConfig, {}> {
 }
 
 interface IConfig extends BaseCTXNodeConfig, Partial<Pick<Scene, "size">> { }
+
+interface IEvent extends BaseCTXNodeEvent { }

@@ -2,13 +2,13 @@ import Value from "@core/object/attribute/Value";
 import { Vector4 } from "@core/object/math/Index";
 import BaseCTXNode, { BaseCTXNodeConfig, BaseCTXNodeEvent, BaseCTXNodeStyle } from "../Base";
 
-export default class Text<C extends IConfig, E extends IEvent> extends BaseCTXNode<IStyle, C, E> {
+export default class Text extends BaseCTXNode<IConfig, IStyle, IEvent> {
     /**
      * 是否是文本
      */
     public static isText: boolean = true;
 
-    constructor(config?: C, style?: IStyle, protected ctx?: CanvasRenderingContext2D) {
+    constructor(config?: IConfig, style?: IStyle, protected ctx?: CanvasRenderingContext2D) {
         super();
         this.style = style ?? this.style;
         config && this.setConfig(config);
@@ -23,7 +23,7 @@ export default class Text<C extends IConfig, E extends IEvent> extends BaseCTXNo
      */
     public readonly bound: Vector4 = Vector4.zero();
 
-    public setConfig(config: C): void {
+    public setConfig(config: IConfig): void {
         super.setConfig(config);
 
         const {
