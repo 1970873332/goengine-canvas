@@ -1,160 +1,120 @@
-import { Vector2, Vector4 } from "@core/object/math/Index";
-import BaseNode, { BaseNodeConfig, BaseNodeEvent } from "@core/object/Node";
+import Vector2 from "@goengine/core/src/object/math/vector/Vector2";
+import BaseNode, { BaseNodeConfig, BaseNodeEvent } from "@goengine/core/src/object/Node";
 
 /**
- * 基础ctx节点
+ * 基础节点
  */
 export default abstract class BaseCTXNode<
     C extends IConfig,
-    S extends IStyle,
     E extends IEvent,
-> extends BaseNode<C, E, BaseCTXNode<any, any, any>> {
-    /**
-     * 相等边框
-     * @param size 
-     */
-    public static equalEdge({ size, line, dash, color, offset = Vector2.zero() }: IEqualEdge): IBorder[] {
-        const
-            { width, height } = size,
-            { x, y } = offset,
-            points: Vector4[] = [
-                Vector4.fromArray([x, y, width + x, y]),
-                Vector4.fromArray([width + x, y, width + x, height + y]),
-                Vector4.fromArray([width + x, height + y, x, height + y]),
-                Vector4.fromArray([x, height + y, x, y])
-            ],
-            edges: IBorder[] = [];
-
-        points.forEach(({ ahead, behind }) => {
-            const
-                len: number = ahead.distance(behind),
-                rounded: number = Math.ceil(len / dash / dash) * dash,
-                result: number = len / rounded;
-            edges.push({
-                paths: [ahead, behind],
-                lineWidth: line,
-                strokeStyle: color,
-                lineDash: [result, result]
-            });
-        });
-
-        return edges;
-    }
-
-    /**
-     * 是否是ctx节点
-     */
-    public readonly isCTXNode: boolean = true;
-
-    /**
-     * 样式
-     */
-    public style: S = {} as S;
-    /**
-     * 边框
-     */
-    public edges?: IBorder[];
+> extends BaseNode<C, E, IAny> {
     /**
      * 路径
      */
-    public declare path: Path2D;
-
+    public path = new Path2D();
     /**
-     * 更新路径
-     * @returns 
+     * 裁剪
+     * @default false
      */
-    public updatePath2D(): void { }
-    /**
-     * 应用样式
-     * @param ctx 
-     */
-    public applyStyle(ctx: CanvasRenderingContext2D): void { }
-    /**
-     * 绘制
-     */
-    public draw(ctx: CanvasRenderingContext2D): void { }
-    /**
-     * 绘制边框
-     * @param ctx 
-     */
-    public drawBorder(ctx: CanvasRenderingContext2D): void {
-        if (!this.edges) return;
-
-        ctx.save();
-
-        this.edges.forEach(({ paths, lineWidth = ctx.lineWidth, strokeStyle = ctx.strokeStyle, lineDash }) => {
-            ctx.beginPath();
-
-            ctx.lineWidth = lineWidth;
-            ctx.strokeStyle = strokeStyle;
-
-            Array.isArray(lineDash) && ctx.setLineDash(lineDash as number[]);
-
-            if (paths instanceof Path2D) {
-                ctx.stroke(paths);
-            } else {
-                const [{ x, y }, ...Rest] = paths;
-
-                ctx.moveTo(x, y);
-
-                Rest.forEach(({ x, y }) => ctx.lineTo(x, y));
-
-                ctx.stroke();
-            }
-        });
-
-        ctx.restore();
-    }
-
-    /**
-     * 重构
-     * @param silent 
-     */
-    public refactor(silent?: boolean): void {
-        this.updatePath2D();
-        !silent && this.trigger();
-    }
-}
-
-interface IStyle { }
-
-interface IConfig extends BaseNodeConfig { }
-
-interface IEvent extends BaseNodeEvent { }
-
-interface IBorder extends Partial<Pick<CanvasPathDrawingStyles, "lineWidth">>, Partial<Pick<CanvasFillStrokeStyles, "strokeStyle">> {
-    /**
-     * 路径
-     */
-    paths: Vector2[] | Path2D;
-    /**
-     * 虚线
-     */
-    lineDash?: [number, number?];
-}
-
-interface IEqualEdge {
+    public clip: boolean | CanvasFillRule = false;
     /**
      * 尺寸
      */
-    size: Vector2;
+    public readonly size = Vector2.zero().bindCallback(
+        this.updatePath2D.bind(this),
+    );
+
     /**
-     * 偏移
+     * 适配
+     * @param node
+     * @returns
      */
-    offset?: Vector2;
+    public adapt(node: IAny): this {
+        this.add(node);
+        this.size.copy(node.size);
+        return this;
+    }
     /**
-     * 线宽
+     * 更新路径
+     * @returns
      */
-    line?: number;
-    /**
-     * 虚线
-     */
-    dash: number;
-    /**
-     * 颜色
-     */
-    color?: string;
+    public updatePath2D(): void {
+        this.path = new Path2D();
+
+        const {
+            path,
+            anchor: { x, y },
+            size: { width, height },
+        } = this;
+
+        path.rect(-x, -y, width, height);
+    }
+
+    public setConfig(config: C, pure?: boolean): void {
+        super.setConfig(config);
+
+        const { size, clip = this.clip } = config;
+
+        Object.assign(this, {
+            clip,
+        });
+
+        size && this.size.set(size.width, size.height, true);
+
+        !pure && this.updatePath2D();
+    }
+
+    public copy(target: this, silence?: boolean): this {
+        const { path, clip, size } = target;
+
+        Object.assign(this, {
+            clip,
+            path,
+        });
+
+        this.size.copy(size, true);
+
+        return super.copy(target, silence);
+    }
 }
 
-export { IBorder as BaseCTXNodeBorder, IConfig as BaseCTXNodeConfig, IEvent as BaseCTXNodeEvent, IStyle as BaseCTXNodeStyle };
+interface IConfig extends BaseNodeConfig, Partial<Pick<IAny, "clip">> {
+    /**
+     * 锚点
+     */
+    anchor?: Partial<VectorObject.Vector2>;
+    /**
+     * 缩放
+     */
+    scale?: Partial<VectorObject.Vector2>;
+    /**
+     * 位置
+     */
+    position?: Partial<VectorObject.Vector2>;
+    /**
+     * 旋转
+     */
+    rotation?: Partial<VectorObject.Vector3>;
+    /**
+     * 尺寸
+     */
+    size?: Partial<VectorObject.Vector2Size>;
+}
 
+interface IEvent extends BaseNodeEvent {}
+
+interface IRule extends Partial<
+    Pick<IConfig, "position" | "scale" | "rotation">
+> {}
+
+interface IPath extends IRule, Partial<Pick<IConfig, "anchor">> {}
+
+type IAny = BaseCTXNode<any, any>;
+
+export {
+    IAny as BaseCTXNodeAny,
+    IConfig as BaseCTXNodeConfig,
+    IEvent as BaseCTXNodeEvent,
+    IPath as BaseCTXNodePath,
+    IRule as BaseCTXNodeRule,
+};
