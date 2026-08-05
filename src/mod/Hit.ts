@@ -6,7 +6,10 @@ import ModComponent, {
 import Value from "@goengine/core/src/object/attribute/Value";
 import Vector2 from "@goengine/core/src/object/math/vector/Vector2";
 import { EventState } from "@goengine/core/src/supplement/Event";
-import { InteractionAny, InteractionEvent } from "@goengine/web/src/control/Interaction";
+import {
+    InteractionAny,
+    InteractionEvent,
+} from "@goengine/web/src/control/Interaction";
 import { ElementUtils } from "@goengine/web/src/util/Element";
 import { CheckUtils } from "../util/Check";
 

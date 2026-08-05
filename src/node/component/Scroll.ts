@@ -1,4 +1,8 @@
-import { HitModAny, HitModEvent, HitModNode } from "@goengine/canvas/src/mod/Hit";
+import {
+    HitModAny,
+    HitModEvent,
+    HitModNode,
+} from "@goengine/canvas/src/mod/Hit";
 import SlideMod, { SlideModConfig } from "@goengine/canvas/src/mod/Slide";
 import { EventState } from "@goengine/core/src/supplement/Event";
 import Clan, { ClanConfig, ClanEvent } from "../advanced/Clan";

@@ -1,4 +1,7 @@
-import { BaseCTXNodeAny, BaseCTXNodeRule } from "@goengine/canvas/src/node/Base";
+import {
+    BaseCTXNodeAny,
+    BaseCTXNodeRule,
+} from "@goengine/canvas/src/node/Base";
 import Scene from "@goengine/canvas/src/node/wrap/Scene";
 import OffscreenCanvasObject from "@goengine/web/src/object/OffscreenCanvas";
 import AssociatedCTXNode from "../node/Associated";

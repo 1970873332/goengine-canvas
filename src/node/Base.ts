@@ -1,5 +1,8 @@
 import Vector2 from "@goengine/core/src/object/math/vector/Vector2";
-import BaseNode, { BaseNodeConfig, BaseNodeEvent } from "@goengine/core/src/object/Node";
+import BaseNode, {
+    BaseNodeConfig,
+    BaseNodeEvent,
+} from "@goengine/core/src/object/Node";
 
 /**
  * 基础节点

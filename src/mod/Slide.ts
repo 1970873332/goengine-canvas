@@ -387,8 +387,7 @@ interface IConfig extends Partial<
      * 约束
      */
     constraint?:
-        | Poly.resolveFunc<IAny["constraint"], [BaseCTXNodeAny]>
-        | TConstraint;
+        Poly.resolveFunc<IAny["constraint"], [BaseCTXNodeAny]> | TConstraint;
 }
 
 interface ITrack {
