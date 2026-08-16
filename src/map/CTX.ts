@@ -21,11 +21,11 @@ export default abstract class CTXMap extends CanvasComponent<CanvasComponentEven
     /**
      * 画布渲染器
      */
-    public canvasRenderer = new CanvasRenderer({ ctx: this.ctx });
+    public readonly canvasRenderer = new CanvasRenderer({ ctx: this.ctx });
     /**
      * 场景根节点
      */
-    public scene = new Scene();
+    public readonly scene = new Scene();
 
     protected update(time: DOMHighResTimeStamp): void {
         super.update(time);
