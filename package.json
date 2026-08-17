@@ -5,6 +5,9 @@
     "license": "MIT",
     "author": "Mr.Rui",
     "type": "module",
-    "dependencies": {},
+    "dependencies": {
+        "@goengine/core": "workspace:*",
+        "@goengine/web": "workspace:*"
+    },
     "devDependencies": {}
 }
